@@ -1,14 +1,10 @@
-"""First-pass task decomposition for M1.
-
-This is intentionally deterministic so the orchestration boundary is clear
-before an LLM planner is introduced.
-"""
+"""First-pass dependency-aware task decomposition for M1."""
 
 from .models import Task
 
 
 def plan(project_request: str) -> list[Task]:
-    """Convert a simple project request into a small executable task list."""
+    """Convert a simple project request into a small executable task DAG."""
     request = project_request.strip()
     if not request:
         raise ValueError("Project request cannot be empty.")
@@ -29,5 +25,6 @@ def plan(project_request: str) -> list[Task]:
             estimated_input_tokens=1500,
             estimated_output_tokens=2500,
             minimum_capability=6.0,
+            dependencies=("task-001",),
         ),
     ]
