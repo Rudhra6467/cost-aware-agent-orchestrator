@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from .models import ExecutionResult, Task
+from .models import ExecutionResult, Task, TaskStatus
 
 
 class AgentExecutor(ABC):
@@ -31,7 +31,7 @@ class MockAgentExecutor(AgentExecutor):
         return ExecutionResult(
             task_id=task.task_id,
             agent_id=self.agent_id,
-            status="succeeded",
+            status=TaskStatus.SUCCEEDED,
             output=output,
             input_tokens=max(1, len(task.description.split())),
             output_tokens=max(1, len(output.split())),
