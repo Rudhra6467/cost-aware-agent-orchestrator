@@ -34,7 +34,7 @@ class AgentProfile:
 
 @dataclass(frozen=True)
 class Task:
-    """A unit of work that CAOS can route to an agent."""
+    """A dependency-aware unit of work that CAOS can route to an agent."""
 
     task_id: str
     description: str
@@ -43,6 +43,7 @@ class Task:
     estimated_output_tokens: int = 1_000
     minimum_capability: float = 0.0
     context_required: int = 4_000
+    dependencies: tuple[str, ...] = ()
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
@@ -69,5 +70,5 @@ class ExecutionResult:
     error: str | None = None
 
     @property
-    def estimated_cost(self) -> float:
-        return 0.0
+    def total_tokens(self) -> int:
+        return self.input_tokens + self.output_tokens
