@@ -1,13 +1,14 @@
 """End-to-end deterministic CAOS orchestration loop for M1.
 
-The orchestrator connects planning, free-first resource selection, execution,
-and telemetry. Provider adapters remain replaceable behind AgentExecutor.
+The orchestrator connects planning, DAG ordering, free-first resource
+selection, execution, and telemetry. Provider adapters remain replaceable.
 """
 
 from dataclasses import dataclass
 
 from .agents import AgentExecutor
 from .cost_optimizer import CostPolicy, CostOption, recommend_lowest_practical_cost
+from .dag import topological_order
 from .models import AgentProfile, ExecutionResult, TaskStatus
 from .planner import plan
 from .state import StateStore
@@ -46,8 +47,9 @@ class CAOSOrchestrator:
         self.state = state_store or StateStore(":memory:")
 
     def run(self, request: str, budget: float | None = None) -> ProjectExecution:
-        tasks = plan(request)
+        tasks = topological_order(plan(request))
         remaining = budget
+        completed_context: list[str] = []
         executions: list[TaskExecution] = []
 
         for task in tasks:
@@ -62,7 +64,8 @@ class CAOSOrchestrator:
             if executor is None:
                 raise ValueError(f"No executor registered for selected resource: {option.agent_id}")
 
-            result = executor.execute(task)
+            context = "\n\n".join(completed_context)
+            result = executor.execute(task, context=context)
             actual_cost = self._actual_cost(option.agent_id, result)
             self.state.record_execution(
                 task_id=result.task_id,
@@ -78,6 +81,8 @@ class CAOSOrchestrator:
                 remaining -= actual_cost
 
             executions.append(TaskExecution(task.task_id, option, result))
+            if result.status == TaskStatus.SUCCEEDED:
+                completed_context.append(f"Completed {task.task_id}:\n{result.output}")
 
         estimated_cost = sum(item.option.estimated_cost for item in executions)
         actual_cost = sum(
