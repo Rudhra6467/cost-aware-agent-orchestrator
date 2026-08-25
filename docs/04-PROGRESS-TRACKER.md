@@ -6,24 +6,28 @@
 |---|---|---:|---|
 | Project definition | 🟢 | 100% | Core concept established |
 | Product promise | 🟢 | 100% | Lowest practical cost + two user paths |
-| North Star | 🟢 | 100% | Revised around legitimate cost minimization |
+| North Star | 🟢 | 100% | Legitimate cost minimization |
 | Constitution | 🟢 | 100% | Cost, legitimacy, verification and user choice defined |
 | Skill set | 🟢 | 100% | Progressive learning path defined |
-| Roadmap | 🟢 | 100% | 10 phases defined |
-| Architecture | 🟢 | 95% | Product, orchestration, state and resource boundaries defined |
+| Roadmap | 🟢 | 100% | Revised around cost-aware build flow |
+| Architecture | 🟢 | 100% | Product, orchestration, state and resource boundaries defined |
 | Product specification | 🟢 | 100% | Build and DIY paths defined |
-| Resource intelligence specification | 🟢 | 80% | Registry/evidence model defined; implementation next |
-| Cost optimizer specification | 🟢 | 80% | Strategy and constraint model defined; implementation next |
+| Resource intelligence specification | 🟢 | 100% | Registry/evidence model defined |
+| Cost optimizer specification | 🟢 | 100% | Strategy and constraint model defined |
 | Research plan | 🟡 | 50% | Baseline experiment structure established |
-| GitHub foundation | 🟢 | 100% | Repository created and connected |
+| GitHub foundation | 🟢 | 100% | Repository and feature branch active |
 | Python project foundation | 🟢 | 100% | Package, tests and CI added |
-| SQLite state | 🟢 | 50% | Initial task/execution telemetry store implemented and tested |
-| Single-agent builder | 🟡 | 35% | Planner, selector and executor boundary exist; real LLM remains |
-| Context handoff | ⚪ | 0% | Not started |
+| Dependency-aware task DAG | 🟢 | 90% | Model, planner dependency and topological validation implemented |
+| SQLite state | 🟢 | 70% | Tasks, executions and handoffs persisted |
+| Free-first cost optimizer | 🟢 | 60% | Deterministic baseline implemented and tested |
+| Resource Registry V1 | 🟢 | 60% | Evidence-backed in-memory schema implemented |
+| Single-agent builder | 🟡 | 55% | Real provider-neutral HTTP adapter now exists; generated artifact loop remains |
+| Two-path plan generator | 🟢 | 50% | Build recommendation + DIY roadmap primitives implemented |
+| Context handoff | 🟡 | 35% | Structured portable handoff state implemented; A→B experiment remains |
 | Multi-agent workflow | ⚪ | 0% | Not started |
-| Dynamic agent selection | 🟡 | 25% | Deterministic baseline selector implemented |
-| Resource discovery | ⚪ | 0% | Curated registry implementation next |
-| Cost optimization engine | 🟡 | 20% | Token-based cost estimation exists; strategy optimizer next |
+| Dynamic agent selection | 🟡 | 30% | Deterministic baseline selector + cost optimizer |
+| Resource discovery | ⚪ | 0% | Automated discovery not started |
+| Cost optimization engine | 🟡 | 30% | Free-first strategy baseline implemented |
 | Failure recovery | ⚪ | 0% | Not started |
 | Verification engine | 🟡 | 15% | Automated unit-test baseline exists |
 | Benchmarking | ⚪ | 0% | Not started |
@@ -41,33 +45,33 @@
 
 - Created Python package and project metadata.
 - Added provider-neutral task, agent and execution models.
+- Added dependency-aware task DAG and topological validation.
 - Added deterministic task decomposition baseline.
-- Added transparent cost-aware agent selection baseline.
-- Added SQLite execution-state persistence.
-- Added provider-neutral `AgentExecutor` interface.
-- Added deterministic mock executor for development/testing.
-- Added initial agent registry configuration.
+- Added transparent agent-selection baseline.
+- Added free-first cost optimizer and tests.
+- Added evidence-backed Resource Registry V1 and tests.
+- Added SQLite execution telemetry and structured handoff persistence.
+- Added portable `HandoffState` with deterministic compact prompt generation.
+- Added provider-neutral `AgentExecutor` interface and mock executor.
+- Added OpenAI-compatible HTTP adapter without hard dependency on a provider SDK.
+- Added end-to-end deterministic CAOS orchestrator connecting planning → DAG → cost optimization → execution → telemetry → context accumulation.
+- Added two-path Build Plan / DIY Roadmap generator.
 - Added automated tests and GitHub Actions CI.
-- Added M1 implementation specification.
-- Created feature branch `feat/m1-first-agent-foundation`.
-- Opened draft PR #1 for review.
+- Created feature branch `feat/m1-first-agent-foundation` and draft PR #1.
 - Revised North Star to **Build your idea for the lowest practical cost**.
-- Added legitimate cost-minimization policy.
-- Added two-path product specification: autonomous build or DIY roadmap.
-- Added Resource Intelligence specification.
-- Added Cost Optimizer specification.
+- Added legitimate cost-minimization policy and Resource Intelligence / Cost Optimizer specifications.
 
 ## Immediate Next Actions
 
-1. Connect a real LLM through the provider-neutral adapter interface.
-2. Implement the first real coding-agent execution path.
-3. Build the curated Resource Registry data model and seed it with evidence-backed resources.
-4. Implement task-level candidate strategy generation.
-5. Implement cost/quality constrained strategy selection.
-6. Persist real token/cost telemetry.
-7. Commit generated project artifacts to GitHub from the orchestrator.
-8. Add build/test verification for generated projects.
-9. Begin structured context state for M3 handoffs.
+1. Verify the latest CI run for the expanded test suite.
+2. Add a safe generated-project artifact model and file manifest contract.
+3. Add GitHub artifact writer behind a provider-neutral repository interface.
+4. Connect the real HTTP adapter to a user-supplied provider configuration locally; never commit credentials.
+5. Build the first real coding task that creates a small tested repository artifact.
+6. Add build/test verification of generated artifacts.
+7. Run the first A→B context-handoff experiment.
+8. Add failure classification and retry/fallback policies.
+9. Begin measured resource benchmarking and cost-quality experiments.
 
 ## Status Definitions
 
