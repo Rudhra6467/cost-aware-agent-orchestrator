@@ -1,4 +1,4 @@
-"""Minimal SQLite state store for CAOS orchestration telemetry."""
+"""SQLite state store for CAOS orchestration telemetry and handoff state."""
 
 import sqlite3
 from pathlib import Path
@@ -6,7 +6,7 @@ from typing import Any
 
 
 class StateStore:
-    """Persist tasks and execution records independently of Git artifacts."""
+    """Persist orchestration state independently of Git software artifacts."""
 
     def __init__(self, path: str | Path = "state/caos.db") -> None:
         self.path = str(path)
@@ -47,6 +47,15 @@ class StateStore:
                 error TEXT,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
+
+            CREATE TABLE IF NOT EXISTS handoffs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_id TEXT NOT NULL,
+                from_agent_id TEXT NOT NULL,
+                to_agent_id TEXT,
+                state_json TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
             """
         )
         db.commit()
@@ -82,9 +91,28 @@ class StateStore:
             ),
         )
 
+    def record_handoff(
+        self,
+        project_id: str,
+        from_agent_id: str,
+        state_json: str,
+        to_agent_id: str | None = None,
+    ) -> None:
+        self._run(
+            "INSERT INTO handoffs(project_id, from_agent_id, to_agent_id, state_json) VALUES (?, ?, ?, ?)",
+            (project_id, from_agent_id, to_agent_id, state_json),
+        )
+
     def execution_count(self) -> int:
         db = self._connect()
         count = int(db.execute("SELECT COUNT(*) FROM executions").fetchone()[0])
+        if self._memory_connection is None:
+            db.close()
+        return count
+
+    def handoff_count(self) -> int:
+        db = self._connect()
+        count = int(db.execute("SELECT COUNT(*) FROM handoffs").fetchone()[0])
         if self._memory_connection is None:
             db.close()
         return count
