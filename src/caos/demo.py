@@ -1,9 +1,8 @@
-"""Run the provider-free M1 planning and selection demonstration."""
+"""Run a provider-free CAOS cost-aware orchestration demonstration."""
 
+from .agents import MockAgentExecutor
 from .models import AgentProfile
-from .planner import plan
-from .selector import select_agent
-from .state import StateStore
+from .orchestrator import CAOSOrchestrator
 
 
 AGENTS = [
@@ -41,25 +40,25 @@ AGENTS = [
 
 
 def run(request: str, budget: float = 0.05) -> None:
-    store = StateStore(":memory:")
-    tasks = plan(request)
+    orchestrator = CAOSOrchestrator(
+        AGENTS,
+        {
+            agent.agent_id: MockAgentExecutor(agent.agent_id)
+            for agent in AGENTS
+        },
+    )
+    result = orchestrator.run(request, budget=budget)
 
-    print("CAOS M1 — first orchestration path")
-    print(f"Budget: ${budget:.2f}\n")
+    print("CAOS — cost-aware orchestration")
+    print(f"Request: {request}")
+    print(f"Estimated cost: ${result.estimated_cost:.6f}")
+    print(f"Actual cost:    ${result.actual_cost:.6f}")
+    print(f"Succeeded:      {result.succeeded}\n")
 
-    for task in tasks:
-        store.record_task(task.task_id, task.description)
-        selection = select_agent(task, AGENTS, budget_remaining=budget)
-        budget -= selection.estimated_cost
-        store.record_execution(
-            task_id=task.task_id,
-            agent_id=selection.agent_id,
-            status="selected",
-            cost_usd=selection.estimated_cost,
-        )
-        print(f"{task.task_id}: {task.description}")
-        print(f"  → {selection.rationale}")
-        print(f"  → Remaining budget: ${budget:.6f}\n")
+    for execution in result.executions:
+        print(f"{execution.task_id}: {execution.option.agent_name}")
+        print(f"  {execution.option.rationale}")
+        print(f"  Status: {execution.result.status.value}\n")
 
 
 if __name__ == "__main__":
