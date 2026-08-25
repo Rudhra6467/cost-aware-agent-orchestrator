@@ -1,0 +1,30 @@
+{
+  "agents": [
+    {
+      "agent_id": "planner-free",
+      "name": "Planner Free Baseline",
+      "coding_score": 5.0,
+      "architecture_score": 7.0,
+      "research_score": 7.0,
+      "context_window": 32000,
+      "cost_per_1k_input": 0.0,
+      "cost_per_1k_output": 0.0,
+      "availability": 0.95,
+      "reliability": 0.95,
+      "enabled": true
+    },
+    {
+      "agent_id": "coder-free",
+      "name": "Coder Free Baseline",
+      "coding_score": 8.0,
+      "architecture_score": 6.0,
+      "research_score": 5.0,
+      "context_window": 64000,
+      "cost_per_1k_input": 0.0,
+      "cost_per_1k_output": 0.0,
+      "availability": 0.90,
+      "reliability": 0.90,
+      "enabled": true
+    }
+  ]
+}

@@ -1,47 +1,55 @@
-# CAOS — Cost-Aware Agent Orchestration System
+# CAOS — Cost-Aware Orchestration System
 
 **Working title:** Autonomous Cost-Aware Multi-Agent Software Development Framework
 
-CAOS is a research-oriented Meta-Agent orchestration framework designed to help budget-constrained developers turn software ideas into functioning, tested software by dynamically selecting and coordinating AI agents according to capability, availability, reliability, context requirements, and cost.
+> **Build your idea for the lowest practical cost.**
+
+CAOS is a research-oriented Meta-Agent orchestration system designed to help budget-constrained developers turn software ideas into functioning, tested software—or receive a detailed roadmap to build it themselves.
+
+CAOS researches the implementation ecosystem, decomposes ideas into tasks, evaluates legitimate free/open-source/trial/discounted/low-cost/paid resources, and selects an economically practical execution strategy.
+
+## Product Paths
+
+### 1. Let CAOS Build It
+
+CAOS researches, plans, executes, verifies, and recovers from failures to deliver a working software artifact within user-defined constraints.
+
+### 2. Show Me How
+
+CAOS provides a detailed, cost-optimized DIY roadmap covering architecture, tools, setup, implementation sequence, expected costs, alternatives, and verification.
+
+## Legitimate Cost Minimization
+
+CAOS optimizes for the **lowest practical cost**, not reckless zero-cost behavior. It may use legitimate free tiers, open-source/local models, published trials and discounts, low-cost APIs, and paid resources where their incremental value justifies the cost.
+
+CAOS must not circumvent rate limits, payment controls, trial restrictions, identity requirements, or provider terms.
 
 ## North Star
 
-> Build an autonomous software-development orchestration system that can transform a user's software idea into a functioning, tested application by dynamically selecting and coordinating AI agents while respecting a defined budget.
+Transform a user's idea into a verified software outcome using the lowest practical total cost while satisfying functionality, quality, reliability, security, time, and budget constraints.
 
 ## Primary Research Question
 
-Can cost-aware dynamic agent selection reduce AI execution cost while maintaining acceptable software-development quality, reliability, and task-success rates compared with fixed-agent approaches?
+> Can cost-aware task-level resource selection achieve comparable or better software outcomes at materially lower cost than fixed-provider or strongest-model baselines?
 
 ## Current Status
 
-**Phase 0 — Foundation / Pre-development**
+**M1 — First Agent Foundation: In progress**
 
-The repository currently contains the project's North Star, constitution, skill plan, roadmap, architecture, research plan, progress tracker, experiment framework, decision log, budget policy, and milestones.
-
-## Core Principles
-
-- Functionality before appearance.
-- Cost is a first-class constraint.
-- LLM claims must be verified by execution/tests.
-- Project state must survive agent replacement.
-- Agents are replaceable; orchestration is provider-agnostic.
-- The Meta-Agent decides; specialist agents execute.
-- Measure before optimizing.
-- Free-first; paid services require measurable justification.
-- Human approval precedes high-risk autonomy.
-- Experiments must be reproducible.
+The repository contains the project constitution, product specification, architecture, resource intelligence specification, cost optimizer specification, research plan, experiment framework, progress tracker, and an executable Python orchestration foundation with tests and CI.
 
 ## Initial Technical Direction
 
-- Visual orchestration: n8n
 - Decision/orchestration logic: Python
+- Visual/operational integration: n8n where useful
 - Project artifact state: Git/GitHub
-- Structured execution state: SQLite initially
+- Structured orchestration state: SQLite initially
 - Verification: automated build/test/lint pipeline
-- Initial agents: Planner, Developer, Reviewer, Tester
+- Provider-neutral agent adapters
+- Initial roles: Researcher, Planner, Architect, Developer, Reviewer, Tester, Cost Optimizer
 
 ## Development Sequence
 
-Foundation → Single-Agent Builder → Persistent State → Context Handoff → Multi-Agent → Dynamic Selection → Failure Recovery → Verification → Cost Optimization → Benchmarking → CAOS Alpha.
+Foundation → Single-Agent Builder → Resource Registry → Real LLM Execution → Persistent State → Context Handoff → Multi-Agent → Dynamic Resource Selection → Failure Recovery → Verification → Cost Optimization → Benchmarking → CAOS Alpha.
 
 See `docs/` for the permanent project source of truth.

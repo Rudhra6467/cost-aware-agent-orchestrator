@@ -31,3 +31,21 @@ Historical architectural decisions are append-only. If a decision changes, recor
 **Decision:** Do not introduce recurring paid infrastructure until a measured bottleneck justifies it.
 
 **Reason:** Budget is a core constraint and a research variable.
+
+## DEC-006 — Provider-Neutral Adapter Boundary
+
+**Decision:** CAOS core will communicate with AI providers through a normalized executor interface rather than importing provider SDKs into planning/selection logic.
+
+**Reason:** Agent replacement, benchmarking and fallback behavior require provider independence.
+
+## DEC-007 — Deterministic Selector as Baseline
+
+**Decision:** Begin agent selection with an explicit deterministic utility function using capability, reliability, availability and estimated cost.
+
+**Reason:** The baseline is explainable and measurable. More sophisticated learned or LLM-based routing can be compared against it later.
+
+## DEC-008 — M1 Before Autonomy
+
+**Decision:** Do not introduce multi-agent autonomy until single-agent execution is observable, testable and recoverable.
+
+**Reason:** Layering autonomy onto an unverified execution core would make failures difficult to diagnose and weaken the research design.

@@ -2,66 +2,81 @@
 
 ## Phase 0 — Foundation
 
-Repository, project doctrine, architecture, skill plan, progress tracking, research framework, budget policy.
+Repository, doctrine, architecture, skill plan, research framework, budget policy, and source-of-truth documentation.
 
-**Exit:** project source of truth exists and development environment can be prepared.
+**Exit:** reproducible project foundation exists.
 
-## Phase 1 — Single-Agent Builder
+## Phase 1 — First CAOS Build Loop
 
-User task → planner → coding agent → GitHub artifact.
+User idea → deterministic planner → dependency-aware DAG → free-first optimizer → provider-neutral executor → telemetry.
+
+**Exit:** a small task can be planned, economically routed, executed, and recorded end-to-end.
+
+## Phase 2 — Real Single-Agent Builder
+
+Connect a real provider adapter and produce structured software artifacts from a small coding request.
 
 **Exit:** a simple software task produces a functioning repository artifact.
 
-## Phase 2 — Persistent State
+## Phase 3 — Persistent Project State
 
-Introduce SQLite orchestration state alongside Git/GitHub project state.
+Expand SQLite orchestration state and Git/GitHub project state into a complete project ledger.
 
-**Exit:** projects, tasks, executions, agents, tokens, costs, and outcomes are persisted.
+**Exit:** projects, tasks, executions, resources, tokens, costs, decisions, handoffs, and outcomes are persisted.
 
-## Phase 3 — Context Handoff
+## Phase 4 — Context Handoff
 
-Build structured handoff state so Agent B can continue Agent A's work after failure or replacement.
+Agent A → structured state snapshot → Agent B, with explicit preservation metrics.
 
-**Exit:** controlled A→B continuation experiment succeeds.
+**Exit:** controlled A→B continuation succeeds without material loss of project intent.
 
-## Phase 4 — Multi-Agent Workflow
+## Phase 5 — Multi-Agent Workflow
 
-Planner, Developer, Reviewer, Tester.
+Researcher → Planner/Architect → Developer → Reviewer → Tester, with role-specific routing.
 
-**Exit:** a complete development task passes through specialist roles.
+**Exit:** a complete development task passes through specialist roles and verification.
 
-## Phase 5 — Dynamic Agent Selection
+## Phase 6 — Dynamic Resource Intelligence
 
-Evaluate agents by capability, availability, reliability, context fit, and cost.
+Resource Registry → evidence refresh → availability/cost/capability state → task-level candidate generation.
 
-**Exit:** the orchestrator selects agents dynamically rather than using a fixed route.
+**Exit:** CAOS can compare legitimate free, open-source, low-cost, and paid resources for a task.
 
-## Phase 6 — Failure Recovery
+## Phase 7 — Failure Recovery
 
-Handle rate limits, timeouts, invalid output, build failures, test failures, context overflow, and budget exhaustion.
+Handle rate limits, timeouts, invalid output, build failures, test failures, context overflow, unavailable resources, and budget exhaustion.
 
-**Exit:** recoverable failures trigger retry/replan/fallback automatically.
+**Exit:** recoverable failures trigger retry, handoff, fallback, or replan automatically.
 
-## Phase 7 — Verification Engine
+## Phase 8 — Verification Engine
 
-Automated build, lint, tests, review, and basic security checks.
+Automated build, lint, tests, review, and basic security checks for generated artifacts.
 
 **Exit:** completion is evidence-based rather than agent-asserted.
 
-## Phase 8 — Cost Optimization
+## Phase 9 — Cost Optimization Research Engine
 
-Token/call/cost telemetry and budget-aware planning.
+Compare free-first, cheapest-capable, fixed-provider, strongest-model, hybrid, local+API, and dynamic CAOS strategies.
 
-**Exit:** system can demonstrate an economic decision for agent selection.
+**Exit:** CAOS can demonstrate measurable cost-quality tradeoffs.
 
-## Phase 9 — Research & Benchmarking
+## Phase 10 — Two-Path Product
 
-Compare single-agent, fixed multi-agent, cheapest-agent, and CAOS dynamic strategies.
+Generate both:
 
-**Exit:** reproducible dataset and benchmark results.
+1. **Let CAOS Build It** — autonomous execution under explicit controls.
+2. **Show Me How** — detailed cost-optimized DIY roadmap.
 
-## Phase 10 — CAOS Alpha
+**Exit:** user can choose either path from the same researched plan.
 
-End-to-end autonomous software-development prototype with controlled human oversight.
+## Phase 11 — Resource Discovery
 
-**Exit:** user requirement → working, tested artifact under explicit budget constraints.
+Automated evidence-backed discovery of pricing, free tiers, trials, open-source alternatives, capability and availability changes.
+
+**Exit:** resource intelligence can update itself with provenance and freshness metadata.
+
+## Phase 12 — Benchmarking & CAOS Alpha
+
+Controlled experiments against fixed and strongest-model baselines, followed by an end-to-end autonomous software-development prototype.
+
+**Exit:** user idea → researched cost plan → working, tested artifact or DIY roadmap under explicit budget constraints.
