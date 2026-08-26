@@ -31,9 +31,9 @@
 | Resource discovery | ⚪ | 0% | Automated discovery not started |
 | Cost optimization engine | 🟡 | 65% | Task routing + cost model + evidence + normalized usage connected to telemetry |
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
-| Verification engine | 🟢 | 45% | Explicit verification runner plus isolated benchmark workspace lifecycle implemented |
+| Verification engine | 🟢 | 55% | Explicit verification runner, isolated workspace lifecycle, artifact manifest and acceptance report implemented |
 | Telemetry | 🟢 | 70% | Normalized execution usage now persists into SQLite |
-| Benchmarking | 🟢 | 55% | Accumulator, comparison metrics, validity gate, reproducible runner and frozen workload implemented |
+| Benchmarking | 🟢 | 60% | Accumulator, comparison metrics, validity gate, reproducible runner, frozen workload and manifest verification implemented |
 | CAOS Alpha | ⚪ | 0% | Not started |
 
 ## Current Milestone
@@ -61,11 +61,13 @@
 - Encoded the eight Benchmark 001 tasks as executable benchmark input.
 - Added isolated benchmark workspace reset/destroy lifecycle with path traversal protection.
 - Added workspace-level verification integration using the existing verification runner.
+- Added artifact expectations and structured manifest verification.
+- Added acceptance reporting that separates missing artifacts from command failures.
 - Defined experimental controls so cost savings cannot be claimed at the expense of quality or reliability.
 
 ## Immediate Next Actions
 
-1. Build the benchmark artifact manifest and end-to-end verification harness.
+1. Build the complete Benchmark 001 harness around the frozen workload and manifest.
 2. Add real resource discovery with source provenance and freshness.
 3. Connect observed reliability/cost to routing only after sufficient observations.
 4. Run the first small real application through the complete CAOS loop.
