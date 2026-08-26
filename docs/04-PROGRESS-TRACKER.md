@@ -33,7 +33,7 @@
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
 | Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
 | Telemetry | 🟢 | 70% | Normalized execution usage now persists into SQLite |
-| Benchmarking | 🟢 | 45% | Accumulator, comparison metrics, validity gate and reproducible runner implemented |
+| Benchmarking | 🟢 | 50% | Accumulator, comparison metrics, validity gate, reproducible runner and frozen workload implemented |
 | CAOS Alpha | ⚪ | 0% | Not started |
 
 ## Current Milestone
@@ -42,7 +42,7 @@
 
 ## Current Strategic Focus
 
-**Measure real execution outcomes—and only count savings when CAOS preserves the required success/quality bar.**
+**Run the first controlled experiment and then replace assumptions about resources with measured evidence.**
 
 ## Completed in M2 so far
 
@@ -57,11 +57,13 @@
 - Added provider-neutral usage normalization.
 - Connected normalized usage to execution telemetry and total-cost aggregation.
 - Added reproducible benchmark runner that sends the identical task set through baseline and CAOS executors.
+- Frozen Benchmark 001 as a small Todo REST API workload with explicit acceptance criteria.
+- Encoded the eight Benchmark 001 tasks as executable benchmark input.
 - Defined experimental controls so cost savings cannot be claimed at the expense of quality or reliability.
 
 ## Immediate Next Actions
 
-1. Define the first fixed benchmark application and acceptance criteria.
+1. Build Benchmark 001 workspace creation/reset and verification harness.
 2. Add real resource discovery with source provenance and freshness.
 3. Connect observed reliability/cost to routing only after sufficient observations.
 4. Run the first small real application through the complete CAOS loop.
