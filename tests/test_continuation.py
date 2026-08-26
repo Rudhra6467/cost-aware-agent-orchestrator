@@ -17,7 +17,7 @@ def test_rate_limited_agent_continues_with_fallback():
         completed_tasks=("schema",),
         pending_tasks=("routes",),
         decisions=("use python",),
-        changed_files=("models.py",),
+        files_changed=("models.py",),
     )
 
     result = coordinator.continue_after_failure(
