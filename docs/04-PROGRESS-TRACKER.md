@@ -29,7 +29,7 @@
 | Multi-agent workflow | 🟡 | 35% | Provider health + fallback + mock A→B continuation implemented |
 | Dynamic agent selection | 🟢 | 55% | Cost + capability + reliability + health-aware routing implemented |
 | Resource discovery | ⚪ | 0% | Automated discovery not started |
-| Cost optimization engine | 🟡 | 55% | Task routing + prediction/actual cost + evidence foundation implemented |
+| Cost optimization engine | 🟡 | 60% | Task routing + cost model + evidence foundation + normalized usage implemented |
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
 | Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
 | Telemetry | 🟢 | 60% | Model + SQLite persistence + aggregation implemented |
@@ -53,17 +53,17 @@
 - Added task-level cost-aware routing.
 - Added deterministic benchmark accumulator and baseline-vs-CAOS comparison metrics.
 - Added predicted-vs-actual token cost calculation primitives.
+- Added provider-neutral usage normalization.
 - Defined experimental controls so cost savings cannot be claimed at the expense of quality or reliability.
 
 ## Immediate Next Actions
 
-1. Add provider-specific usage normalization.
-2. Connect predicted-vs-actual costs to execution telemetry.
-3. Build the first fixed baseline-vs-CAOS benchmark runner.
-4. Add real resource discovery with source provenance and freshness.
-5. Connect observed reliability/cost to routing only after sufficient observations.
-6. Run the first small real application through the complete CAOS loop.
-7. Verify CI and repair any integration issues before declaring M2 complete.
+1. Connect normalized usage and predicted-vs-actual costs to execution telemetry.
+2. Build the first fixed baseline-vs-CAOS benchmark runner.
+3. Add real resource discovery with source provenance and freshness.
+4. Connect observed reliability/cost to routing only after sufficient observations.
+5. Run the first small real application through the complete CAOS loop.
+6. Verify CI and repair any integration issues before declaring M2 complete.
 
 ## Status Definitions
 
