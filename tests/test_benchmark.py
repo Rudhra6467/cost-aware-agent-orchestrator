@@ -1,6 +1,6 @@
 import pytest
 
-from caos.benchmark import BenchmarkAccumulator, compare
+from caos.benchmark import BenchmarkAccumulator, compare, optimization_is_valid
 
 
 def test_benchmark_aggregates_runs():
@@ -23,3 +23,18 @@ def test_compare_reports_savings_and_quality_delta():
     assert metrics["cost_savings_pct"] == pytest.approx(40.0)
     assert metrics["success_rate_delta_pct"] == pytest.approx(0.0)
     assert metrics["latency_change_pct"] == pytest.approx(-20.0)
+    assert optimization_is_valid(baseline.result(), caos.result())
+
+
+def test_cheaper_but_less_successful_run_is_not_a_valid_optimization():
+    baseline = BenchmarkAccumulator("baseline")
+    baseline.add(cost=10, success=True, latency_ms=100)
+    caos = BenchmarkAccumulator("caos")
+    caos.add(cost=1, success=False, latency_ms=80)
+    assert not optimization_is_valid(baseline.result(), caos.result())
+
+
+def test_negative_measurements_are_rejected():
+    benchmark = BenchmarkAccumulator("baseline")
+    with pytest.raises(ValueError):
+        benchmark.add(cost=-0.01, success=True, latency_ms=100)
