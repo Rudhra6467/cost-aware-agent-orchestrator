@@ -17,17 +17,24 @@ class AgentExecutor(ABC):
 
 
 class MockAgentExecutor(AgentExecutor):
-    """Deterministic executor used for local development and tests."""
+    """Deterministic executor used for local development and tests.
 
-    def __init__(self, agent_id: str = "mock-agent") -> None:
+    ``responses`` is optional and lets tests supply realistic file artifacts
+    while preserving the simple default mock behavior.
+    """
+
+    def __init__(self, responses: dict[str, str] | str | None = None, agent_id: str = "mock-agent") -> None:
         self.agent_id = agent_id
+        self.responses = responses if isinstance(responses, dict) else {}
 
     def execute(self, task: Task, context: str = "") -> ExecutionResult:
-        output = (
-            "MOCK EXECUTION\n"
-            f"Task: {task.description}\n"
-            f"Context supplied: {'yes' if context else 'no'}\n"
-        )
+        output = self.responses.get(task.task_id)
+        if output is None:
+            output = (
+                "MOCK EXECUTION\n"
+                f"Task: {task.description}\n"
+                f"Context supplied: {'yes' if context else 'no'}\n"
+            )
         return ExecutionResult(
             task_id=task.task_id,
             agent_id=self.agent_id,
