@@ -17,11 +17,7 @@ class AgentExecutor(ABC):
 
 
 class MockAgentExecutor(AgentExecutor):
-    """Deterministic executor used for local development and tests.
-
-    ``responses`` is optional and lets tests supply realistic file artifacts
-    while preserving the simple default mock behavior.
-    """
+    """Deterministic executor used for local development and tests."""
 
     def __init__(self, responses: dict[str, str] | str | None = None, agent_id: str = "mock-agent") -> None:
         self.agent_id = agent_id
