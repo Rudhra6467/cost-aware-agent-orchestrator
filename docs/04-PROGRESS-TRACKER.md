@@ -31,9 +31,9 @@
 | Resource discovery | ⚪ | 0% | Automated discovery not started |
 | Cost optimization engine | 🟡 | 65% | Task routing + cost model + evidence + normalized usage connected to telemetry |
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
-| Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
+| Verification engine | 🟢 | 45% | Explicit verification runner plus isolated benchmark workspace lifecycle implemented |
 | Telemetry | 🟢 | 70% | Normalized execution usage now persists into SQLite |
-| Benchmarking | 🟢 | 50% | Accumulator, comparison metrics, validity gate, reproducible runner and frozen workload implemented |
+| Benchmarking | 🟢 | 55% | Accumulator, comparison metrics, validity gate, reproducible runner and frozen workload implemented |
 | CAOS Alpha | ⚪ | 0% | Not started |
 
 ## Current Milestone
@@ -59,11 +59,13 @@
 - Added reproducible benchmark runner that sends the identical task set through baseline and CAOS executors.
 - Frozen Benchmark 001 as a small Todo REST API workload with explicit acceptance criteria.
 - Encoded the eight Benchmark 001 tasks as executable benchmark input.
+- Added isolated benchmark workspace reset/destroy lifecycle with path traversal protection.
+- Added workspace-level verification integration using the existing verification runner.
 - Defined experimental controls so cost savings cannot be claimed at the expense of quality or reliability.
 
 ## Immediate Next Actions
 
-1. Build Benchmark 001 workspace creation/reset and verification harness.
+1. Build the benchmark artifact manifest and end-to-end verification harness.
 2. Add real resource discovery with source provenance and freshness.
 3. Connect observed reliability/cost to routing only after sufficient observations.
 4. Run the first small real application through the complete CAOS loop.
