@@ -24,64 +24,46 @@
 | Resource Registry V1 | 🟢 | 60% | Evidence-backed in-memory schema implemented |
 | Single-agent builder | 🟡 | 65% | Real provider adapter + artifact parser + workspace exist |
 | Transparent build/DIY proposal | 🟢 | 65% | User-facing proposal primitives implemented |
-| Context handoff | 🟡 | 35% | Structured portable handoff state implemented; A→B experiment remains |
+| Context handoff | 🟡 | 55% | Versioned integrity-checked handoff manifest + portable state implemented |
 | Generated artifact pipeline | 🟡 | 55% | Explicit file manifest, safe workspace and verification runner implemented |
-| Multi-agent workflow | ⚪ | 0% | Not started |
-| Dynamic agent selection | 🟡 | 30% | Deterministic baseline selector + cost optimizer |
+| Multi-agent workflow | 🟡 | 20% | Provider health registry + fallback router implemented; second-agent execution remains |
+| Dynamic agent selection | 🟡 | 40% | Deterministic baseline selector + health-aware fallback routing |
 | Resource discovery | ⚪ | 0% | Automated discovery not started |
 | Cost optimization engine | 🟡 | 30% | Free-first strategy baseline implemented |
-| Failure recovery | ⚪ | 0% | Not started |
+| Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
 | Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
 | Benchmarking | ⚪ | 0% | Not started |
 | CAOS Alpha | ⚪ | 0% | Not started |
 
 ## Current Milestone
 
-**M1 — First Agent Foundation / Real Build Pipeline**
+**M1.5 — Multi-Resource Continuation**
 
 ## Current Strategic Focus
 
-**Idea Blueprint → User Approval → Cost Proposal → First Verifiable Software Build**
+**Preserve project state, detect provider failure/quota conditions, and route work to the next eligible resource without losing execution context.**
 
-## Completed in M1 so far
+## Completed in M1.5 so far
 
-- Created Python package and project metadata.
-- Added provider-neutral task, agent and execution models.
-- Added dependency-aware task DAG and topological validation.
-- Added deterministic task decomposition baseline.
-- Added transparent agent-selection baseline.
-- Added free-first cost optimizer and tests.
-- Added evidence-backed Resource Registry V1 and tests.
-- Added SQLite execution telemetry and structured handoff persistence.
-- Added portable `HandoffState` with deterministic compact prompt generation.
-- Added provider-neutral `AgentExecutor` interface and mock executor.
-- Added OpenAI-compatible HTTP adapter without hard dependency on a provider SDK.
-- Added end-to-end deterministic CAOS orchestrator connecting planning → DAG → cost optimization → execution → telemetry → context accumulation.
-- Added Phase 1 Blueprint Engine with frontend/backend/database/infrastructure/external-resource layers.
-- Added user validation gate: approve / clarify / refine.
-- Added transparent two-path proposal primitives: Let CAOS Build It / Show Me How.
-- Added explicit `FILE:` artifact parsing contract.
-- Added safe generated-project workspace with path-traversal protection.
-- Added explicit verification command runner with timeout handling.
-- Added tests for blueprint, proposal, artifact parsing, workspace safety and verification.
-- Added M1 Real Build Pipeline specification.
-- Added automated tests and GitHub Actions CI.
-- Revised North Star to **Build your idea for the lowest practical cost**.
-- Added legitimate cost-minimization policy and Resource Intelligence / Cost Optimizer specifications.
+- Added versioned `HandoffManifest` around portable `HandoffState`.
+- Added SHA-256 integrity verification to detect corrupted/tampered handoff state.
+- Added provider health states: healthy / rate-limited / unavailable / unknown.
+- Added remaining-request and reset metadata to provider health.
+- Added health-aware `HandoffRouter` that excludes the failed source and selects an eligible fallback.
+- Added tests for handoff round-trip, integrity failure, and fallback selection.
+- Added bounded build repair loop and failure classification in M1.
 
 ## Immediate Next Actions
 
-1. Verify CI for the current real-build-pipeline branch.
-2. Convert an approved blueprint into a richer domain-specific task DAG.
-3. Connect task-level alternatives into the transparent cost proposal.
-4. Add Git-backed artifact writer behind the repository interface.
-5. Connect the real HTTP adapter to a user-supplied provider configuration locally; never commit credentials.
-6. Build the first real coding task that creates a small tested repository artifact.
-7. Add test-failure classification and repair loop.
-8. Add provider fallback on rate limits/provider failures.
-9. Run the first A→B context-handoff experiment.
-10. Add dynamic resource-registry-driven selection and evidence refresh.
-11. Begin measured cost-quality-time-reliability benchmarking.
+1. Verify CI for the latest handoff commits.
+2. Add a repository-backed handoff writer using the existing repository abstraction.
+3. Wire provider health/rate-limit signals into the real HTTP executor.
+4. Add a second mock agent and execute a complete A→B continuation test.
+5. Restore the handoff manifest into Agent B's prompt automatically.
+6. Connect handoff routing to the cost/resource optimizer rather than health alone.
+7. Add dynamic resource-registry-driven selection and evidence refresh.
+8. Build the first real small application end-to-end.
+9. Begin measured cost-quality-time-reliability benchmarking.
 
 ## Status Definitions
 
