@@ -93,6 +93,25 @@ class StateStore:
             return None
         return {"resource_id": row["resource_id"], "provider": row["provider"], "resource_name": row["resource_name"], "evidence": json.loads(row["evidence_json"]), "observed_at": row["observed_at"], "confidence": row["confidence"]}
 
+    def record_normalized_execution(self, usage: Any, *, task_id: str, agent_id: str, status: str = "succeeded", error: str | None = None) -> None:
+        """Persist normalized provider usage at the execution boundary."""
+        self.record_execution(
+            task_id=task_id,
+            agent_id=agent_id,
+            status=status,
+            input_tokens=usage.input_tokens,
+            output_tokens=usage.output_tokens,
+            cost_usd=usage.estimated_cost_usd,
+            error=error,
+        )
+
+    def execution_cost_total(self) -> float:
+        db = self._connect()
+        total = float(db.execute("SELECT COALESCE(SUM(cost_usd), 0) FROM executions").fetchone()[0])
+        if self._memory_connection is None:
+            db.close()
+        return total
+
     def execution_count(self) -> int:
         db = self._connect(); count = int(db.execute("SELECT COUNT(*) FROM executions").fetchone()[0])
         if self._memory_connection is None: db.close()
