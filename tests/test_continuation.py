@@ -9,7 +9,7 @@ def test_rate_limited_agent_continues_with_fallback():
     health.update(ProviderHealth("agent-a", ProviderState.RATE_LIMITED, 0, 120, "429"))
     health.update(ProviderHealth("agent-b", ProviderState.HEALTHY, 10))
 
-    b = MockAgentExecutor({})
+    b = MockAgentExecutor({}, agent_id="agent-b")
     coordinator = ContinuationCoordinator({"agent-b": b}, health)
     state = HandoffState(
         project_id="demo",
