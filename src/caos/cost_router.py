@@ -34,6 +34,7 @@ class CostAwareRouter:
         policy: CostPolicy | None = None,
         handoff_penalty: float = 0.0,
     ) -> RouteDecision:
+        policy = policy or CostPolicy()
         options = rank_cost_options(task, agents, policy)
         if self.health is not None:
             healthy = {item.provider_id for item in self.health.eligible()}
@@ -41,9 +42,14 @@ class CostAwareRouter:
         if not options:
             raise ValueError("No healthy, legitimate resource satisfies the task constraints.")
 
-        # Expected total cost includes the estimated task cost plus a bounded
-        # penalty for likely handoff/retry overhead. Higher reliability reduces
-        # the expected penalty; this is deliberately transparent and tunable.
+        # The user-facing policy is explicitly free-first. Once a legitimate
+        # free option satisfies the task constraints, do not silently replace
+        # it with a paid provider merely because a weighted score favors it.
+        if policy.prefer_free:
+            free_options = [item for item in options if item.is_free]
+            if free_options:
+                options = free_options
+
         scored: list[RouteDecision] = []
         for option in options:
             expected = option.estimated_cost + handoff_penalty * (1.0 - option.reliability)
