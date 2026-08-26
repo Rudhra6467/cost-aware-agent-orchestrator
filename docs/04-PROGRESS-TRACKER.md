@@ -33,7 +33,7 @@
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
 | Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
 | Telemetry | 🟢 | 70% | Normalized execution usage now persists into SQLite |
-| Benchmarking | 🟢 | 30% | Accumulator, comparison metrics and experimental protocol implemented |
+| Benchmarking | 🟢 | 40% | Accumulator, comparison metrics and validity gate implemented |
 | CAOS Alpha | ⚪ | 0% | Not started |
 
 ## Current Milestone
@@ -42,7 +42,7 @@
 
 ## Current Strategic Focus
 
-**Measure real execution outcomes and use evidence—not assumptions—to choose the lowest practical resource for each task.**
+**Measure real execution outcomes—and only count savings when CAOS preserves the required success/quality bar.**
 
 ## Completed in M2 so far
 
@@ -52,6 +52,7 @@
 - Persisted resource evidence in SQLite.
 - Added task-level cost-aware routing.
 - Added deterministic benchmark accumulator and baseline-vs-CAOS comparison metrics.
+- Added benchmark validity gate: lower cost alone does not constitute a successful optimization.
 - Added predicted-vs-actual token cost calculation primitives.
 - Added provider-neutral usage normalization.
 - Connected normalized usage to execution telemetry and total-cost aggregation.
