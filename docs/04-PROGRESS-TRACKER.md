@@ -29,11 +29,11 @@
 | Multi-agent workflow | 🟡 | 35% | Provider health + fallback + mock A→B continuation implemented |
 | Dynamic agent selection | 🟢 | 55% | Cost + capability + reliability + health-aware routing implemented |
 | Resource discovery | ⚪ | 0% | Automated discovery not started |
-| Cost optimization engine | 🟡 | 45% | Task-level cost-aware routing implemented; empirical calibration pending |
+| Cost optimization engine | 🟡 | 50% | Task-level routing + prediction/actual cost primitives implemented |
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
 | Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
 | Telemetry | 🟢 | 60% | Model + SQLite persistence + aggregation implemented |
-| Benchmarking | 🟢 | 25% | Accumulator, comparison metrics and experimental protocol implemented |
+| Benchmarking | 🟢 | 30% | Accumulator, comparison metrics and experimental protocol implemented |
 | CAOS Alpha | ⚪ | 0% | Not started |
 
 ## Current Milestone
@@ -51,13 +51,14 @@
 - Added stale-evidence detection.
 - Added task-level cost-aware routing.
 - Added deterministic benchmark accumulator and baseline-vs-CAOS comparison metrics.
+- Added predicted-vs-actual token cost calculation primitives.
 - Defined experimental controls so cost savings cannot be claimed at the expense of quality or reliability.
 
 ## Immediate Next Actions
 
 1. Persist resource evidence in SQLite.
 2. Add provider-specific usage normalization.
-3. Build predicted-vs-actual cost calculations.
+3. Connect predicted-vs-actual costs to telemetry.
 4. Build the first fixed baseline-vs-CAOS benchmark runner.
 5. Add real resource discovery with source provenance and freshness.
 6. Connect observed reliability/cost to routing only after sufficient observations.
