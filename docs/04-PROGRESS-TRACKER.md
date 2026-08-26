@@ -33,7 +33,7 @@
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
 | Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
 | Telemetry | 🟢 | 70% | Normalized execution usage now persists into SQLite |
-| Benchmarking | 🟢 | 40% | Accumulator, comparison metrics and validity gate implemented |
+| Benchmarking | 🟢 | 45% | Accumulator, comparison metrics, validity gate and reproducible runner implemented |
 | CAOS Alpha | ⚪ | 0% | Not started |
 
 ## Current Milestone
@@ -56,11 +56,12 @@
 - Added predicted-vs-actual token cost calculation primitives.
 - Added provider-neutral usage normalization.
 - Connected normalized usage to execution telemetry and total-cost aggregation.
+- Added reproducible benchmark runner that sends the identical task set through baseline and CAOS executors.
 - Defined experimental controls so cost savings cannot be claimed at the expense of quality or reliability.
 
 ## Immediate Next Actions
 
-1. Build the first fixed baseline-vs-CAOS benchmark runner.
+1. Define the first fixed benchmark application and acceptance criteria.
 2. Add real resource discovery with source provenance and freshness.
 3. Connect observed reliability/cost to routing only after sufficient observations.
 4. Run the first small real application through the complete CAOS loop.
