@@ -19,9 +19,9 @@
 | Python project foundation | 🟢 | 100% | Package, tests and CI added |
 | Idea blueprint engine | 🟢 | 60% | Deterministic reviewable blueprint + validation decisions implemented |
 | Dependency-aware task DAG | 🟢 | 90% | Model, planner dependency and topological validation implemented |
-| SQLite state | 🟢 | 75% | Tasks, executions, handoffs and telemetry persisted |
+| SQLite state | 🟢 | 80% | Tasks, executions, handoffs, telemetry and resource evidence persisted |
 | Free-first cost optimizer | 🟢 | 60% | Deterministic baseline implemented and tested |
-| Resource Registry V1 | 🟢 | 60% | Evidence-backed resource schema implemented |
+| Resource Registry V1 | 🟢 | 70% | Evidence validation, confidence and freshness implemented |
 | Single-agent builder | 🟡 | 65% | Real provider adapter + artifact parser + workspace exist |
 | Transparent build/DIY proposal | 🟢 | 65% | User-facing proposal primitives implemented |
 | Context handoff | 🟢 | 70% | Versioned integrity-checked handoff + continuation coordinator implemented |
@@ -29,7 +29,7 @@
 | Multi-agent workflow | 🟡 | 35% | Provider health + fallback + mock A→B continuation implemented |
 | Dynamic agent selection | 🟢 | 55% | Cost + capability + reliability + health-aware routing implemented |
 | Resource discovery | ⚪ | 0% | Automated discovery not started |
-| Cost optimization engine | 🟡 | 50% | Task-level routing + prediction/actual cost primitives implemented |
+| Cost optimization engine | 🟡 | 55% | Task routing + prediction/actual cost + evidence foundation implemented |
 | Failure recovery | 🟡 | 50% | Failure classification + bounded repair loop implemented |
 | Verification engine | 🟡 | 35% | Explicit generated-project verification runner added |
 | Telemetry | 🟢 | 60% | Model + SQLite persistence + aggregation implemented |
@@ -48,7 +48,8 @@
 
 - Added SQLite execution telemetry persistence and summary aggregation.
 - Added evidence-backed resource records with source, observation time and confidence.
-- Added stale-evidence detection.
+- Added stale-evidence detection and validation rules.
+- Persisted resource evidence in SQLite.
 - Added task-level cost-aware routing.
 - Added deterministic benchmark accumulator and baseline-vs-CAOS comparison metrics.
 - Added predicted-vs-actual token cost calculation primitives.
@@ -56,14 +57,13 @@
 
 ## Immediate Next Actions
 
-1. Persist resource evidence in SQLite.
-2. Add provider-specific usage normalization.
-3. Connect predicted-vs-actual costs to telemetry.
-4. Build the first fixed baseline-vs-CAOS benchmark runner.
-5. Add real resource discovery with source provenance and freshness.
-6. Connect observed reliability/cost to routing only after sufficient observations.
-7. Run the first small real application through the complete CAOS loop.
-8. Verify CI and repair any integration issues before declaring M2 complete.
+1. Add provider-specific usage normalization.
+2. Connect predicted-vs-actual costs to execution telemetry.
+3. Build the first fixed baseline-vs-CAOS benchmark runner.
+4. Add real resource discovery with source provenance and freshness.
+5. Connect observed reliability/cost to routing only after sufficient observations.
+6. Run the first small real application through the complete CAOS loop.
+7. Verify CI and repair any integration issues before declaring M2 complete.
 
 ## Status Definitions
 
