@@ -27,6 +27,8 @@ class BenchmarkAccumulator:
         self._handoffs = 0
 
     def add(self, *, cost: float, success: bool, latency_ms: int, retries: int = 0, handoffs: int = 0) -> None:
+        if cost < 0 or latency_ms < 0 or retries < 0 or handoffs < 0:
+            raise ValueError("benchmark measurements cannot be negative")
         self._costs.append(cost)
         self._successes += int(success)
         self._latencies.append(latency_ms)
@@ -59,3 +61,8 @@ def compare(baseline: BenchmarkResult, caos: BenchmarkResult) -> dict[str, float
                                / baseline.average_latency_ms * 100
                                if baseline.average_latency_ms else 0.0),
     }
+
+
+def optimization_is_valid(baseline: BenchmarkResult, caos: BenchmarkResult) -> bool:
+    """Cost savings count only when CAOS preserves success rate."""
+    return caos.total_cost <= baseline.total_cost and caos.success_rate >= baseline.success_rate
