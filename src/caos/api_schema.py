@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from .constraints import Autonomy
 
 SUPPORTED_ACTIONS = {"BUILD", "DIY"}
 
@@ -24,6 +25,12 @@ def validate_plan_request(payload: Any) -> dict[str, Any]:
     max_days = constraints.get("max_build_days")
     if max_days is not None and (not isinstance(max_days, (int, float)) or isinstance(max_days, bool) or max_days <= 0):
         raise ValueError("max_build_days must be greater than 0")
+    autonomy = constraints.get("autonomy", Autonomy.CONTROLLED.value)
+    if autonomy not in {a.value for a in Autonomy}:
+        raise ValueError("autonomy must be controlled, autonomous, or diy")
+    prefer_free = constraints.get("prefer_free", True)
+    if not isinstance(prefer_free, bool):
+        raise ValueError("prefer_free must be boolean")
     return {"idea": idea.strip(), "constraints": dict(constraints)}
 
 
