@@ -3,8 +3,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from .constraints import UserConstraints
-from .decision import Decision
+from .constraints import Autonomy, UserConstraints
 from .planning_contract import PlanningResponse
 
 
@@ -25,16 +24,32 @@ class PlanningService:
         if not request.idea or not request.idea.strip():
             raise ValueError("Idea is required")
         blueprint = self.analyzer.analyze(request.idea)
-        result = self.planner.plan(blueprint, request.constraints)
-        return result
+        return self.planner.plan(blueprint, request.constraints)
 
     @staticmethod
     def request_from_dict(payload: dict[str, Any]) -> PlanningRequest:
-        idea = str(payload.get("idea", "")).strip()
+        if not isinstance(payload, dict):
+            raise ValueError("Request body must be an object")
+        idea = payload.get("idea", "")
+        if not isinstance(idea, str) or not idea.strip():
+            raise ValueError("idea must be a non-empty string")
         raw = payload.get("constraints") or {}
-        constraints = UserConstraints(
-            budget=float(raw.get("budget", 0)),
-            quality_threshold=float(raw.get("quality_threshold", 0.7)),
-            max_build_days=raw.get("max_build_days"),
-        )
-        return PlanningRequest(idea, constraints)
+        if not isinstance(raw, dict):
+            raise ValueError("constraints must be an object")
+        try:
+            autonomy = Autonomy(str(raw.get("autonomy", Autonomy.CONTROLLED.value)))
+            budget = float(raw.get("budget", 0))
+            quality = float(raw.get("quality_threshold", 0.7))
+            max_days = raw.get("max_build_days")
+            max_days = None if max_days is None else float(max_days)
+            prefer_free = bool(raw.get("prefer_free", True))
+            constraints = UserConstraints(
+                budget=budget,
+                quality_threshold=quality,
+                max_build_days=max_days,
+                autonomy=autonomy,
+                prefer_free=prefer_free,
+            )
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid constraints: {exc}") from exc
+        return PlanningRequest(idea.strip(), constraints)
