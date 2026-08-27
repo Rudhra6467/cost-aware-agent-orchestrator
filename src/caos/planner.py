@@ -47,10 +47,10 @@ class CostPlanGenerator:
 
         base_ledger = ledger or UsageLedger()
         zero_ledger = UsageLedger(tuple(base_ledger.snapshot(r.resource_id) for r in self.matcher.resources.all()))
+        hybrid_ledger = UsageLedger(tuple(base_ledger.snapshot(r.resource_id) for r in self.matcher.resources.all()))
         zero_lines: list[PlanLine] = []
         hybrid_lines: list[PlanLine] = []
-        free_units = 0.0
-        total_units = 0.0
+        zero_free = hybrid_free = total_units = 0.0
 
         for task in enriched:
             candidates = self.matcher.match(task)
@@ -58,19 +58,28 @@ class CostPlanGenerator:
                 raise ValueError(f"No eligible resource for task {task.task_id}")
             units = self._units(task)
             total_units += units
+
             free = next((c for c in candidates if zero_ledger.remaining(c.resource.resource_id) >= units), None)
-            selected = free or candidates[0]
-            zero_lines.append(self._line(task, selected, zero_ledger, prefer_free=True))
-            free_used = min(units, zero_ledger.remaining(selected.resource.resource_id))
-            if free_used > 0:
-                zero_ledger.reserve(selected.resource.resource_id, free_used)
-                free_units += free_used
+            selected_zero = free or candidates[0]
+            zero_lines.append(self._allocate_line(task, selected_zero, zero_ledger, "Zero-Cost First"))
+            zero_free += self._reserve_free(zero_ledger, selected_zero, units)
 
-            cheapest = min(candidates, key=lambda c: c.resource.effective_unit_cost)
-            hybrid_lines.append(self._line(task, cheapest, UsageLedger(), prefer_free=False))
+            # For the hybrid plan, evaluate each candidate using the shared
+            # quota currently remaining for that provider/resource.
+            selected_hybrid = min(candidates, key=lambda c: self._marginal_cost(c, units, hybrid_ledger))
+            hybrid_lines.append(self._allocate_line(task, selected_hybrid, hybrid_ledger, "Lowest Practical Cost"))
+            hybrid_free += self._reserve_free(hybrid_ledger, selected_hybrid, units)
 
-        zero = BuildPlan("zero-cost", "Zero-Cost First", tuple(zero_lines), sum(x.estimated_cost for x in zero_lines), free_units / total_units if total_units else 1.0, ("Free quota is shared across tasks through the usage ledger.", "V2 remains a transparent greedy planner, not a global optimum solver."))
-        hybrid = BuildPlan("lowest-practical", "Lowest Practical Cost", tuple(hybrid_lines), sum(x.estimated_cost for x in hybrid_lines), sum(max(0.0, x.estimated_units - x.estimated_cost / max(1e-12, self._unit_cost(x.resource_id, candidates if False else []))) for x in []) if False else 0.0, ("V2 keeps the lowest-cost candidate baseline for the hybrid comparison.", "Shared quota optimization for the hybrid path is the next refinement."))
+        zero = BuildPlan(
+            "zero-cost", "Zero-Cost First", tuple(zero_lines),
+            sum(x.estimated_cost for x in zero_lines), zero_free / total_units if total_units else 1.0,
+            ("Free quota is shared across tasks through the usage ledger.", "V2 is a transparent greedy planner, not a global optimum solver."),
+        )
+        hybrid = BuildPlan(
+            "lowest-practical", "Lowest Practical Cost", tuple(hybrid_lines),
+            sum(x.estimated_cost for x in hybrid_lines), hybrid_free / total_units if total_units else 1.0,
+            ("Free quota is shared across tasks through the usage ledger.", "V2 chooses the lowest marginal task cost from eligible candidates."),
+        )
         return zero, hybrid
 
     @staticmethod
@@ -78,24 +87,29 @@ class CostPlanGenerator:
         return max(1.0, task.estimated_tokens / 1000.0)
 
     @staticmethod
-    def _unit_cost(resource_id: str, candidates: list[ResourceCandidate]) -> float:
-        for candidate in candidates:
-            if candidate.resource.resource_id == resource_id:
-                return candidate.resource.unit_cost
-        return 0.0
+    def _marginal_cost(candidate: ResourceCandidate, units: float, ledger: UsageLedger) -> float:
+        free = min(units, ledger.remaining(candidate.resource.resource_id))
+        return max(0.0, units - free) * candidate.resource.unit_cost
 
     @classmethod
-    def _line(cls, task: EnrichedTask, candidate: ResourceCandidate, ledger: UsageLedger, prefer_free: bool) -> PlanLine:
+    def _allocate_line(cls, task: EnrichedTask, candidate: ResourceCandidate, ledger: UsageLedger, plan_name: str) -> PlanLine:
         units = cls._units(task)
         resource = candidate.resource
         remaining = ledger.remaining(resource.resource_id)
         free = min(units, remaining)
         paid_units = max(0.0, units - free)
         cost = paid_units * resource.unit_cost
-        if prefer_free and free >= units:
-            reason = "Uses sufficient shared free capacity."
-        elif prefer_free:
-            reason = "Shared free capacity is insufficient; remaining usage uses registered paid capacity."
+        if free >= units:
+            reason = f"{plan_name}: uses sufficient shared free capacity."
+        elif free > 0:
+            reason = f"{plan_name}: consumes remaining shared free capacity and pays for the spillover."
         else:
-            reason = "Selected by lowest reliability-adjusted unit cost among eligible candidates."
+            reason = f"{plan_name}: no free capacity remains; uses registered paid capacity."
         return PlanLine(task.task_id, resource.resource_id, resource.provider, units, remaining, cost, reason)
+
+    @staticmethod
+    def _reserve_free(ledger: UsageLedger, candidate: ResourceCandidate, units: float) -> float:
+        free = min(units, ledger.remaining(candidate.resource.resource_id))
+        if free > 0:
+            ledger.reserve(candidate.resource.resource_id, free)
+        return free
