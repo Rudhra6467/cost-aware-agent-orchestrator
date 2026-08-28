@@ -8,7 +8,7 @@ from .agents import AgentExecutor
 from .handoff import HandoffState
 from .handoff_manifest import HandoffManifest
 from .handoff_router import HandoffRouter
-from .models import TaskStatus
+from .models import Task, TaskStatus
 from .provider_health import ProviderHealthRegistry
 
 
@@ -29,40 +29,17 @@ class ContinuationCoordinator:
         self.executors = executors
         self.router = HandoffRouter(health)
 
-    def continue_after_failure(
-        self,
-        *,
-        source_provider: str,
-        state: HandoffState,
-        reason: str,
-        target_capability: str = "coding",
-    ) -> ContinuationResult:
-        decision = self.router.route(
-            state,
-            source_agent=source_provider,
-            target_capability=target_capability,
-            reason=reason,
-        )
+    def continue_after_failure(self, *, source_provider: str, state: HandoffState, reason: str, target_capability: str = "coding") -> ContinuationResult:
+        decision = self.router.route(state, source_agent=source_provider, target_capability=target_capability, reason=reason)
         if decision.target_provider is None:
             return ContinuationResult(source_provider, None, False, None, decision.manifest, None)
-
         target_prompt = (
             "Continue the existing CAOS task from the handoff manifest below. "
             "Do not restart completed work. Preserve architecture and constraints.\n\n"
             + decision.manifest.to_json()
         )
         executor = self.executors[decision.target_provider]
-        task = type("ContinuationTask", (), {
-            "id": f"handoff:{state.project_id}",
-            "description": target_prompt,
-        })()
+        task = Task(task_id=f"handoff:{state.project_id}", description=target_prompt, required_capability=target_capability)
         result = executor.execute(task, target_prompt)
-        output = result.output if result.status == TaskStatus.COMPLETED else None
-        return ContinuationResult(
-            source_provider,
-            decision.target_provider,
-            True,
-            target_prompt,
-            decision.manifest,
-            output,
-        )
+        output = result.output if result.status == TaskStatus.SUCCEEDED else None
+        return ContinuationResult(source_provider, decision.target_provider, True, target_prompt, decision.manifest, output)
