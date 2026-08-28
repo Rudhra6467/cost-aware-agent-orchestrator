@@ -7,19 +7,21 @@ import re
 from .project_workspace import WorkspaceFile
 
 
-_FILE_RE = re.compile(r"(?:^|\n)FILE:\s*([^\n]+)\n```[^\n]*\n(.*?)\n```", re.DOTALL)
+_FILE_RE = re.compile(
+    r"(?:^|\n)FILE:\s*([^\n]+)\n```[^\n]*\n(.*?)\n```(?:\n|$)",
+    re.DOTALL,
+)
 
 
 def parse_file_artifacts(output: str) -> list[WorkspaceFile]:
-    """Extract FILE: path fenced-block artifacts from model output.
-
-    The format is deliberately explicit so arbitrary prose cannot silently
-    become a filesystem operation.
-    """
+    """Extract explicit FILE artifacts and reject unsafe paths."""
+    if not output:
+        return []
     files: list[WorkspaceFile] = []
     for match in _FILE_RE.finditer(output):
         path = match.group(1).strip()
         content = match.group(2)
-        if path and not path.startswith("/") and ".." not in path.split("/"):
+        parts = path.replace("\\", "/").split("/")
+        if path and not path.startswith(("/", "\\")) and ".." not in parts:
             files.append(WorkspaceFile(path=path, content=content))
     return files
