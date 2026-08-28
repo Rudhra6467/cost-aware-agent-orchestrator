@@ -6,14 +6,32 @@ Production deployments can replace the transport without changing domain code.
 
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from typing import Callable
+from pathlib import Path
 
 from .api_schema import validate_plan_request, validate_plan_response
 from .http_api import PlanningAPI
 
 
+WEB_INDEX = Path(__file__).resolve().parents[2] / "web" / "index.html"
+
+
 class CAOSRequestHandler(BaseHTTPRequestHandler):
     api: PlanningAPI
+
+    def do_GET(self):
+        if self.path in ("/", "/index.html"):
+            try:
+                body = WEB_INDEX.read_bytes()
+            except OSError as exc:
+                self._write(500, {"error": "web_ui_unavailable", "message": str(exc)})
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        self._write(404, {"error": "not_found"})
 
     def do_POST(self):
         if self.path != "/api/v1/plan":
