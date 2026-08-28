@@ -12,8 +12,8 @@ def test_execution_plan_routes_each_task_and_totals_cost():
         ResourceObservation("cheap-research", "provider-b", frozenset({"research"}), "source-b", now, False, 0.002, 0.95),
     ])
     plan = build_execution_plan([
-        Task("code", "write code"),
-        Task("research", "research pricing"),
+        Task("code", "write code", required_capability="coding"),
+        Task("research", "research pricing", required_capability="research"),
     ], discovery)
     assert [item.resource_id for item in plan.tasks] == ["free-code", "cheap-research"]
     assert plan.estimated_total_cost == 0.002
