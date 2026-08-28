@@ -1,6 +1,6 @@
 """Application-facing planning service for CAOS."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from .constraints import Autonomy, UserConstraints
@@ -10,11 +10,11 @@ from .planning_contract import PlanningResponse
 @dataclass(frozen=True)
 class PlanningRequest:
     idea: str
-    constraints: UserConstraints = UserConstraints()
+    constraints: UserConstraints = field(default_factory=UserConstraints)
 
 
 class PlanningService:
-    """Stable application boundary; domain engines can evolve behind it."""
+    """Stable application boundary; the concrete planner is injected."""
 
     def __init__(self, analyzer, planner):
         self.analyzer = analyzer
@@ -23,8 +23,7 @@ class PlanningService:
     def create_plan(self, request: PlanningRequest) -> PlanningResponse:
         if not request.idea or not request.idea.strip():
             raise ValueError("Idea is required")
-        blueprint = self.analyzer.analyze(request.idea)
-        return self.planner.plan(blueprint, request.constraints)
+        return self.planner.plan(request)
 
     @staticmethod
     def request_from_dict(payload: dict[str, Any]) -> PlanningRequest:
@@ -38,17 +37,12 @@ class PlanningService:
             raise ValueError("constraints must be an object")
         try:
             autonomy = Autonomy(str(raw.get("autonomy", Autonomy.CONTROLLED.value)))
-            budget = float(raw.get("budget", 0))
-            quality = float(raw.get("quality_threshold", 0.7))
-            max_days = raw.get("max_build_days")
-            max_days = None if max_days is None else float(max_days)
-            prefer_free = bool(raw.get("prefer_free", True))
             constraints = UserConstraints(
-                budget=budget,
-                quality_threshold=quality,
-                max_build_days=max_days,
+                budget=float(raw.get("budget", 0)),
+                quality_threshold=float(raw.get("quality_threshold", 0.7)),
+                max_build_days=None if raw.get("max_build_days") is None else float(raw["max_build_days"]),
                 autonomy=autonomy,
-                prefer_free=prefer_free,
+                prefer_free=bool(raw.get("prefer_free", True)),
             )
         except (TypeError, ValueError) as exc:
             raise ValueError(f"Invalid constraints: {exc}") from exc
