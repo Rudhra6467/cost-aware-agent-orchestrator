@@ -1,13 +1,14 @@
 from caos.api_app import create_server
 from caos.http_api import PlanningAPI
-from caos.planning_service import PlanningService
+from caos.product_service import ProductService
 
 
 def main() -> None:
-    service = PlanningService()
-    api = PlanningAPI(service)
+    product = ProductService()
+    api = PlanningAPI(product)
     server = create_server(api)
     print("CAOS server listening on http://127.0.0.1:8080")
+    print("Paste an idea, then use SHOW ME HOW or BUILD.")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

@@ -1,47 +1,53 @@
 # CAOS — Cost-Aware Agent Orchestration System
 
-**Working title:** Autonomous Cost-Aware Multi-Agent Software Development Framework
+Find the **lowest practical cost** path from an idea to a working local slice.
 
-CAOS is a research-oriented Meta-Agent orchestration framework designed to help budget-constrained developers turn software ideas into functioning, tested software by dynamically selecting and coordinating AI agents according to capability, availability, reliability, context requirements, and cost.
+CAOS is not "the cheapest builder in the world." It is a planner that uses recorded free quota first, shows assumptions, then lets you choose:
 
-## North Star
+1. **SHOW ME HOW** — a DIY roadmap file
+2. **BUILD** — a local workspace with plan, audit, and artifacts
 
-> Build an autonomous software-development orchestration system that can transform a user's software idea into a functioning, tested application by dynamically selecting and coordinating AI agents while respecting a defined budget.
+v0 BUILD uses the local deterministic agent. Actual model spend is $0 until a provider adapter exists.
 
-## Primary Research Question
+## Run it
 
-Can cost-aware dynamic agent selection reduce AI execution cost while maintaining acceptable software-development quality, reliability, and task-success rates compared with fixed-agent approaches?
+```bash
+python -m pip install -e ".[dev]"
+python run_server.py
+```
 
-## Current Status
+Open http://127.0.0.1:8080
 
-**Phase 0 — Foundation / Pre-development**
+Use this test idea:
 
-The repository currently contains the project's North Star, constitution, skill plan, roadmap, architecture, research plan, progress tracker, experiment framework, decision log, budget policy, and milestones.
+> Build a small Python API that stores customer notes and exposes a search endpoint.
 
-## Core Principles
+Then click **Plan with CAOS**, then **SHOW ME HOW** or **BUILD**.
 
-- Functionality before appearance.
-- Cost is a first-class constraint.
-- LLM claims must be verified by execution/tests.
-- Project state must survive agent replacement.
-- Agents are replaceable; orchestration is provider-agnostic.
-- The Meta-Agent decides; specialist agents execute.
-- Measure before optimizing.
-- Free-first; paid services require measurable justification.
-- Human approval precedes high-risk autonomy.
-- Experiments must be reproducible.
+- DIY files land in `workspaces/diy/`
+- BUILD workspaces land in `workspaces/<session_id>/`
 
-## Initial Technical Direction
+## What is ready for testing
 
-- Visual orchestration: n8n
-- Decision/orchestration logic: Python
-- Project artifact state: Git/GitHub
-- Structured execution state: SQLite initially
-- Verification: automated build/test/lint pipeline
-- Initial agents: Planner, Developer, Reviewer, Tester
+- Idea to two plans (Zero-Cost First, Lowest Practical Cost)
+- Assumptions that say estimate is not actual
+- SHOW ME HOW writes markdown
+- BUILD writes `plan.json`, `roadmap.md`, `audit.json`, `status.json`, and task artifacts
+- BUILD reports estimated vs actual cost
 
-## Development Sequence
+## What is not ready
 
-Foundation → Single-Agent Builder → Persistent State → Context Handoff → Multi-Agent → Dynamic Selection → Failure Recovery → Verification → Cost Optimization → Benchmarking → CAOS Alpha.
+- Live provider adapters
+- Live free-tier probes
+- Compiling production apps from arbitrary ideas
+- n8n
 
-See `docs/` for the permanent project source of truth.
+## Tests
+
+```bash
+pytest -q
+```
+
+## Promise
+
+Free-first. Paid capacity only as itemized spillover. Human gate before BUILD. Verification over agent claims.
