@@ -1,11 +1,11 @@
 import json
 import threading
 from http.client import HTTPConnection
+from http.server import ThreadingHTTPServer
 
 from caos.http_api import CAOSRequestHandler
 from caos.models import AgentProfile
 from caos.pipeline import CostAwarePipeline
-from http.server import ThreadingHTTPServer
 
 
 def make_pipeline():
@@ -13,10 +13,11 @@ def make_pipeline():
         AgentProfile(
             agent_id="free-coder",
             name="Free Coder",
-            capabilities={"coding": 0.8, "architecture": 0.6},
-            context_window=8000,
-            input_cost_per_million=0,
-            output_cost_per_million=0,
+            coding_score=0.80,
+            architecture_score=0.60,
+            context_window=8_000,
+            cost_per_1k_input=0,
+            cost_per_1k_output=0,
             reliability=0.85,
             availability=0.95,
         ),
@@ -35,7 +36,7 @@ def test_health_and_plan_http_contract():
         assert response.status == 200
         assert json.loads(response.read())["status"] == "ok"
 
-        body = json.dumps({"idea": "Build a simple fitness tracking application"})
+        body = json.dumps({"idea": "Build a simple fitness tracking application for home workouts"})
         conn.request("POST", "/api/plan", body=body, headers={"Content-Type": "application/json"})
         response = conn.getresponse()
         payload = json.loads(response.read())
