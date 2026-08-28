@@ -1,4 +1,4 @@
-"""Dependency-free HTTP surface for the CAOS planning contract and web UI."""
+"""Dependency-free HTTP surface for CAOS planning and controlled building."""
 
 from __future__ import annotations
 
@@ -7,15 +7,17 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Callable
 
+from .build_api import build_from_request
 from .planning_api import plan_from_request
 
 WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
 
 
 class CAOSRequestHandler(BaseHTTPRequestHandler):
-    """Expose the planning API and the first CAOS browser experience."""
+    """Expose planning, controlled BUILD, health, and the browser experience."""
 
     pipeline_factory: Callable[[], Any] | None = None
+    builder_factory: Callable[[Any], Any] | None = None
 
     def _json(self, status: int, body: dict[str, Any]) -> None:
         payload = json.dumps(body).encode("utf-8")
@@ -38,7 +40,7 @@ class CAOSRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(payload)
 
     def do_POST(self) -> None:  # noqa: N802 - stdlib handler API
-        if self.path != "/api/plan":
+        if self.path not in {"/api/plan", "/api/build"}:
             self._json(404, {"error": "Not found"})
             return
 
@@ -47,7 +49,17 @@ class CAOSRequestHandler(BaseHTTPRequestHandler):
             payload = json.loads(self.rfile.read(length) or b"{}")
             if self.pipeline_factory is None:
                 raise RuntimeError("CAOS pipeline is not configured")
-            result = plan_from_request(payload, self.pipeline_factory())
+
+            if self.path == "/api/plan":
+                result = plan_from_request(payload, self.pipeline_factory())
+            else:
+                if self.builder_factory is None:
+                    raise RuntimeError("CAOS builder is not configured")
+                result = build_from_request(
+                    payload,
+                    self.pipeline_factory,
+                    self.builder_factory,
+                )
             self._json(200, result)
         except (ValueError, TypeError, json.JSONDecodeError) as exc:
             self._json(400, {"error": str(exc)})
@@ -70,7 +82,13 @@ class CAOSRequestHandler(BaseHTTPRequestHandler):
         return
 
 
-def serve(pipeline_factory: Callable[[], Any], host: str = "127.0.0.1", port: int = 8080) -> None:
+def serve(
+    pipeline_factory: Callable[[], Any],
+    host: str = "127.0.0.1",
+    port: int = 8080,
+    builder_factory: Callable[[Any], Any] | None = None,
+) -> None:
     CAOSRequestHandler.pipeline_factory = pipeline_factory
+    CAOSRequestHandler.builder_factory = builder_factory
     server = ThreadingHTTPServer((host, port), CAOSRequestHandler)
     server.serve_forever()
