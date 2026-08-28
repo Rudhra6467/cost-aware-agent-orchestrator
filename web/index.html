@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAOS — Build for the lowest practical cost</title>
+  <style>
+    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #18202a; background: #f6f7f9; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { width: min(1040px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 80px; }
+    .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5c6673; }
+    h1 { font-size: clamp(38px, 7vw, 72px); line-height: .98; max-width: 780px; margin: 14px 0 18px; letter-spacing: -.045em; }
+    .lead { max-width: 690px; color: #5c6673; font-size: 19px; line-height: 1.55; }
+    .composer { margin-top: 34px; background: #fff; border: 1px solid #dfe3e8; border-radius: 18px; padding: 18px; box-shadow: 0 14px 45px rgba(20, 28, 38, .07); }
+    textarea { width: 100%; min-height: 130px; resize: vertical; border: 0; outline: 0; font: inherit; font-size: 18px; line-height: 1.5; }
+    .controls { display: flex; gap: 12px; align-items: center; justify-content: space-between; border-top: 1px solid #edf0f2; padding-top: 14px; }
+    .hint { color: #78818d; font-size: 13px; }
+    button { border: 0; border-radius: 10px; padding: 12px 18px; font: inherit; font-weight: 700; cursor: pointer; background: #18202a; color: #fff; }
+    button:disabled { opacity: .55; cursor: wait; }
+    #error { margin-top: 16px; color: #9b2c2c; }
+    #result { margin-top: 30px; display: grid; gap: 16px; }
+    section.card { background: #fff; border: 1px solid #dfe3e8; border-radius: 16px; padding: 22px; }
+    h2 { margin: 0 0 12px; font-size: 18px; }
+    .summary { font-size: 17px; line-height: 1.55; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+    .layer, .task { border: 1px solid #e7eaee; border-radius: 12px; padding: 14px; }
+    .layer strong, .task strong { display: block; margin-bottom: 6px; }
+    .muted { color: #68727f; font-size: 13px; line-height: 1.45; }
+    .recommendation { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+    .price { font-size: 28px; font-weight: 800; white-space: nowrap; }
+    ul { margin: 8px 0 0 18px; padding: 0; line-height: 1.6; }
+    @media (max-width: 620px) { main { padding-top: 32px; } .controls { align-items: flex-end; flex-direction: column; } .recommendation { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">CAOS · Cost-Aware Orchestration System</div>
+    <h1>Build your idea for the lowest practical cost.</h1>
+    <p class="lead">Describe what you want to build. CAOS will turn the idea into a reviewable blueprint, compare feasible resources, and explain the practical build path.</p>
+
+    <div class="composer">
+      <textarea id="idea" placeholder="I want to build a fitness app that helps people follow home workouts..." aria-label="What do you want to build?"></textarea>
+      <div class="controls">
+        <span class="hint">Be specific about the outcome. CAOS will handle the structure.</span>
+        <button id="plan">Plan with CAOS</button>
+      </div>
+    </div>
+    <div id="error" role="alert"></div>
+    <div id="result"></div>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>
