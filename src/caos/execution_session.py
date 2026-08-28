@@ -24,10 +24,19 @@ class TaskStatus(str, Enum):
     FAILED = "failed"
 
 
+class TaskRole(str, Enum):
+    ANALYST = "analyst"
+    DEVELOPER = "developer"
+    HANDOFF = "handoff"
+    VERIFIER = "verifier"
+    REVIEWER = "reviewer"
+
+
 @dataclass
 class ExecutionTask:
     task_id: str
     description: str
+    role: TaskRole = TaskRole.DEVELOPER
     status: TaskStatus = TaskStatus.PENDING
     assigned_agent: str | None = None
 
@@ -52,28 +61,30 @@ class ExecutionSession:
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         data["status"] = self.status.value
-        data["progress"] = self.progress
         for task in data["tasks"]:
+            task["role"] = task["role"].value
             task["status"] = task["status"].value
+        data["progress"] = self.progress
         return data
 
 
 class ExecutionSessionManager:
-    """In-memory session store for the first execution vertical slice.
-
-    Persistence is deliberately deferred until the execution lifecycle is proven.
-    """
+    """In-memory session store for the first execution vertical slice."""
 
     def __init__(self) -> None:
         self._sessions: dict[str, ExecutionSession] = {}
 
-    def create(self, idea: str, plan: PlanSummary, tasks: list[str]) -> ExecutionSession:
+    def create(self, idea: str, plan: PlanSummary, tasks: list[str | tuple[TaskRole, str]]) -> ExecutionSession:
+        execution_tasks = []
+        for i, task in enumerate(tasks):
+            role, description = task if isinstance(task, tuple) else (TaskRole.DEVELOPER, task)
+            execution_tasks.append(ExecutionTask(f"task_{i + 1}", description, role))
         session = ExecutionSession(
             session_id=f"exec_{uuid4().hex[:12]}",
             plan_id=plan.plan_id,
             plan_label=plan.label,
             idea=idea,
-            tasks=[ExecutionTask(f"task_{i + 1}", task) for i, task in enumerate(tasks)],
+            tasks=execution_tasks,
         )
         self._sessions[session.session_id] = session
         return session
