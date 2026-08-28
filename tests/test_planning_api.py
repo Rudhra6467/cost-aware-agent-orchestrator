@@ -1,5 +1,6 @@
+import pytest
+
 from caos.planning_api import plan_from_request
-from caos.cost_optimizer import CostPolicy
 from caos.models import AgentProfile
 from caos.pipeline import CostAwarePipeline
 
@@ -9,20 +10,22 @@ def make_pipeline():
         AgentProfile(
             agent_id="free-coder",
             name="Free Coder",
-            capabilities={"coding": 0.8, "architecture": 0.6},
-            context_window=8000,
-            input_cost_per_million=0,
-            output_cost_per_million=0,
+            coding_score=0.80,
+            architecture_score=0.60,
+            context_window=8_000,
+            cost_per_1k_input=0,
+            cost_per_1k_output=0,
             reliability=0.85,
             availability=0.95,
         ),
         AgentProfile(
             agent_id="paid-coder",
             name="Paid Coder",
-            capabilities={"coding": 0.95, "architecture": 0.9},
-            context_window=16000,
-            input_cost_per_million=1,
-            output_cost_per_million=2,
+            coding_score=0.95,
+            architecture_score=0.90,
+            context_window=16_000,
+            cost_per_1k_input=0.001,
+            cost_per_1k_output=0.002,
             reliability=0.95,
             availability=0.99,
         ),
@@ -45,9 +48,5 @@ def test_plan_from_request_returns_end_user_contract():
 
 
 def test_plan_from_request_rejects_missing_idea():
-    try:
+    with pytest.raises(ValueError, match="idea"):
         plan_from_request({}, make_pipeline())
-    except ValueError as exc:
-        assert "idea" in str(exc)
-    else:
-        raise AssertionError("missing idea should fail")
