@@ -5,6 +5,9 @@ description = "Cost-Aware Agent Orchestration System"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.scripts]
+caos-web = "caos.web_app:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 
