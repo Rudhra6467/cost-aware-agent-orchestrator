@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 from .agent_catalog import AgentCatalog, AgentScore, TaskRequirements
+from .audit_trail import AuditTrail, ExecutionEvent
 from .execution_engine import AgentRegistry, AgentResult
 from .execution_session import ExecutionSessionManager, ExecutionTask
 
@@ -16,21 +17,16 @@ class SelectionDecision:
 
 
 class Orchestrator:
-    """Selects an agent for a task, records the decision, then executes it."""
+    """Selects an agent, records the decision, then executes it."""
 
-    def __init__(self, sessions: ExecutionSessionManager, catalog: AgentCatalog, agents: AgentRegistry) -> None:
+    def __init__(self, sessions: ExecutionSessionManager, catalog: AgentCatalog, agents: AgentRegistry, audit: AuditTrail | None = None) -> None:
         self.sessions = sessions
         self.catalog = catalog
         self.agents = agents
+        self.audit = audit or AuditTrail()
         self.decisions: dict[str, SelectionDecision] = {}
 
-    def run_task(
-        self,
-        session_id: str,
-        task_id: str,
-        requirements: TaskRequirements,
-        context: dict[str, str] | None = None,
-    ) -> tuple[SelectionDecision, AgentResult]:
+    def run_task(self, session_id: str, task_id: str, requirements: TaskRequirements, context: dict[str, str] | None = None) -> tuple[SelectionDecision, AgentResult]:
         session = self.sessions.get(session_id)
         task = next((item for item in session.tasks if item.task_id == task_id), None)
         if task is None:
@@ -41,9 +37,8 @@ class Orchestrator:
         selected: AgentScore = self.catalog.select(requirements)
         decision = SelectionDecision(task_id, selected.agent.name, selected.score, selected.reasons)
         self.decisions[task_id] = decision
-
-        result = self._execute(session_id, task, selected.agent.name, context or {})
-        return decision, result
+        self.audit.record(ExecutionEvent(session_id, "AGENT_SELECTED", task_id, selected.agent.name, evidence=selected.reasons))
+        return decision, self._execute(session_id, task, selected.agent.name, context or {})
 
     def _execute(self, session_id: str, task: ExecutionTask, agent_name: str, context: dict[str, str]) -> AgentResult:
         session = self.sessions.get(session_id)
@@ -52,11 +47,14 @@ class Orchestrator:
         agent = self.agents.get(agent_name)
         task.assigned_agent = agent_name
         task.status = task.status.RUNNING
+        self.audit.record(ExecutionEvent(session_id, "TASK_STARTED", task.task_id, agent_name))
         result = agent.execute(task, context)
         if result.success:
             self.sessions.complete_task(session_id, task.task_id)
+            self.audit.record(ExecutionEvent(session_id, "TASK_COMPLETED", task.task_id, agent_name, result="success"))
         else:
             task.status = task.status.FAILED
             session.status = session.status.FAILED
             session.error = result.error or "Agent execution failed"
+            self.audit.record(ExecutionEvent(session_id, "TASK_FAILED", task.task_id, agent_name, result=result.error or "Agent execution failed"))
         return result
