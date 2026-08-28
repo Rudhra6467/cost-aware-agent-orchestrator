@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 from .agent_catalog import AgentCatalog, TaskRequirements
+from .audit_trail import AuditTrail, ExecutionEvent
 from .execution_engine import AgentRegistry, AgentResult
 from .execution_scheduler import ExecutionScheduler
 from .execution_session import ExecutionSession, ExecutionSessionManager, ExecutionStatus
@@ -19,13 +20,16 @@ class RuntimeStep:
 class ExecutionRuntime:
     """Single entry point for dependency-aware, cost-aware task execution."""
 
-    def __init__(self, sessions: ExecutionSessionManager, graph: TaskGraph, catalog: AgentCatalog, agents: AgentRegistry) -> None:
+    def __init__(self, sessions: ExecutionSessionManager, graph: TaskGraph, catalog: AgentCatalog, agents: AgentRegistry, audit: AuditTrail | None = None) -> None:
         self.sessions = sessions
+        self.audit = audit or AuditTrail()
         self.scheduler = ExecutionScheduler(graph)
-        self.orchestrator = Orchestrator(sessions, catalog, agents)
+        self.orchestrator = Orchestrator(sessions, catalog, agents, self.audit)
 
     def start(self, session_id: str) -> ExecutionSession:
-        return self.sessions.start(session_id)
+        session = self.sessions.start(session_id)
+        self.audit.record(ExecutionEvent(session_id, "SESSION_STARTED"))
+        return session
 
     def ready_tasks(self, session_id: str) -> list[str]:
         return self.scheduler.ready_tasks(self.sessions.get(session_id))
@@ -41,5 +45,4 @@ class ExecutionRuntime:
         task_requirements = requirements.get(task_id)
         if task_requirements is None:
             raise KeyError(f"Missing requirements for ready task: {task_id}")
-        decision, result = self.orchestrator.run_task(session_id, task_id, task_requirements, context)
-        return RuntimeStep(decision, result)
+        return RuntimeStep(*self.orchestrator.run_task(session_id, task_id, task_requirements, context))
